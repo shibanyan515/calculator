@@ -263,14 +263,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/result"
             android:layout_width="match_parent"
             android:layout_height="174dp"
             android:background="@drawable/frame_style"
             android:text="式/計算結果" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/process"
             android:layout_width="match_parent"
             android:layout_height="274dp"
             android:background="@drawable/frame_style"
