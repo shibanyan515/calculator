@@ -39,7 +39,7 @@
         android:layout_marginStart="2dp"
         android:layout_marginEnd="2dp"
         android:layout_marginBottom="16dp"
-        android:text="2"
+        android:text="del"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/equal"
         app:layout_constraintHorizontal_bias="0.5"
@@ -214,33 +214,33 @@
         android:layout_marginBottom="8dp"
         android:text="AC"
         app:layout_constraintBottom_toTopOf="@+id/seven"
-        app:layout_constraintEnd_toStartOf="@+id/brackets"
+        app:layout_constraintEnd_toStartOf="@+id/bracketLeft"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/brackets"
+        android:id="@+id/bracketLeft"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
         android:layout_marginEnd="2dp"
-        android:text="()"
+        android:text="("
         app:layout_constraintBaseline_toBaselineOf="@+id/ac"
-        app:layout_constraintEnd_toStartOf="@+id/percent"
+        app:layout_constraintEnd_toStartOf="@+id/bracketRight"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/ac" />
 
     <Button
-        android:id="@+id/percent"
+        android:id="@+id/bracketRight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
         android:layout_marginEnd="2dp"
-        android:text="%"
+        android:text=")"
         app:layout_constraintBaseline_toBaselineOf="@+id/ac"
         app:layout_constraintEnd_toStartOf="@+id/div"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/brackets" />
+        app:layout_constraintStart_toEndOf="@+id/bracketLeft" />
 
     <Button
         android:id="@+id/div"
@@ -252,7 +252,7 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/ac"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/percent" />
+        app:layout_constraintStart_toEndOf="@+id/bracketRight" />
 
     <LinearLayout
         android:layout_width="411dp"
@@ -267,14 +267,16 @@
             android:layout_width="match_parent"
             android:layout_height="174dp"
             android:background="@drawable/frame_style"
-            android:text="式/計算結果" />
+            android:textSize="60dp"
+            android:text="" />
 
         <TextView
             android:id="@+id/process"
             android:layout_width="match_parent"
             android:layout_height="274dp"
             android:background="@drawable/frame_style"
-            android:text="途中経過" />
+            android:textSize="60dp"
+            android:text="" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
