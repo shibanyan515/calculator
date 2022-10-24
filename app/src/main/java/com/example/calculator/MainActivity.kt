@@ -229,6 +229,7 @@ var textIsNum : Boolean = false
 
         }
 
+
         //各ボタンが押された時の処理用の関数
 
         fun acBtnAction() {
@@ -244,15 +245,18 @@ var textIsNum : Boolean = false
             headIsZero = false
             cntLeftBracket = 0
 
-
+        }
+        //ゼロ除算が出た後の入力用
+        fun isZeroDivison(){
+            if(resultView.text == "ゼロ除算です"){
+                acBtnAction()
+            }
         }
         // 1~9
         fun numBtnAction(num: String) {
             //todo イコールの直後に数字が押された時の処理
             //todo )の直後に数字が押された時の処理
-            if(resultView.text == "ゼロ除算です"){
-                acBtnAction()
-            }
+            isZeroDivison()
 
             resultView.text = resultView.text.toString() + num
 
@@ -270,9 +274,7 @@ var textIsNum : Boolean = false
         fun zeroBtnAction (zero: String) {
             //todo イコールの直後に数字が押された時の処理
             //todo )の直後に数字が押された時の処理
-            if(resultView.text == "ゼロ除算です"){
-                acBtnAction()
-            }
+            isZeroDivison()
 
             if(headIsZero==true&&point== false) {
 
@@ -293,9 +295,8 @@ var textIsNum : Boolean = false
         }
 
         fun opBtnAction(op : String) {
-            if(resultView.text == "ゼロ除算です"){
-                acBtnAction()
-            }
+            isZeroDivison()
+
             if(ac == false && operator == false && leftBracket ==false) {
                 resultView.text = resultView.text.toString() + op
 
@@ -308,33 +309,29 @@ var textIsNum : Boolean = false
                 rightBracket = false
                 headIsZero = false
 
-
-
-
             }
         }
 //ここまで見た
     fun bracketLeftBtnAction(br : String) {
-    if(resultView.text == "ゼロ除算です"){
-        acBtnAction()
-    }
+        isZeroDivison()
     //todo 先頭でも使えて、)(にならない条件
-    if(resultView.text.length == 0 || operator==true || leftBracket==true) {
-        resultView.text = resultView.text.toString() + br
-        cntLeftBracket++
+        if(resultView.text.length == 0 || operator==true || leftBracket==true) {
+            resultView.text = resultView.text.toString() + br
+            cntLeftBracket++
 
-        number = false
-        ac = false
-        equal = false
-        operator = false
-        point = false
-        leftBracket = true
-        rightBracket = false
-        headIsZero = false
+            number = false
+            ac = false
+            equal = false
+            operator = false
+            point = false
+            leftBracket = true
+            rightBracket = false
+            headIsZero = false
     }
 }
 
         fun bracketRightBtnAction(br : String) {
+            isZeroDivison()
             //todo 前が(でもなく、演算子でもない条件
             if(cntLeftBracket>0 && operator==false && leftBracket==false) {
                 resultView.text = resultView.text.toString() + br
@@ -354,7 +351,16 @@ var textIsNum : Boolean = false
         }
 
         fun equalBtnAction() {
-            if (cntLeftBracket == 0 && operator!=true && ac !=true){
+            isZeroDivison()
+            var isOpExist: Boolean = false //数字のみでイコール押すと落ちる問題への対処
+            for(i in 0 .. resultView.text.length-1){
+                if(resultView.text.elementAt(i).toString() == "+" || resultView.text.elementAt(i).toString() == "-"
+                    || resultView.text.elementAt(i).toString() == "*" || resultView.text.elementAt(i).toString() == "/"){
+                    isOpExist = true
+                    break
+                }
+            }
+            if (cntLeftBracket == 0 && operator!=true && ac !=true && isOpExist == true){
 
             toRPoland()
 
@@ -367,26 +373,11 @@ var textIsNum : Boolean = false
             rightBracket = false
             headIsZero = false
         }
-            //todo textを配列に渡す関数
-        }
 
-
-
-        fun delBtnAction() {
-            if(resultView.text.length > 0) {
-                //todo textが空のとき何もしない
-
-                //一文字削除
-                resultView.text = resultView.text.dropLast(1)
-                //削除の結果0文字になったらacをtrue?
-            if(resultView.text.length==0){
-                acBtnAction()
-            }
-                //削除した文字の前の文字に対応した処理？
-            }
         }
 
         fun pointBtnAction (pnt: String) {
+            isZeroDivison()
             if(number==true) {
                 resultView.text = resultView.text.toString() + pnt
 
@@ -401,6 +392,79 @@ var textIsNum : Boolean = false
 
             }
         }
+
+
+        fun delBtnAction() {
+            isZeroDivison()
+            if(resultView.text.length > 0) {
+                //todo textが空のとき何もしない
+                //ブラケットのカウント上下
+                if(resultView.text.last().toString()=="(") {
+                    cntLeftBracket--
+                } else if(resultView.text.last().toString()==")") {
+                    cntLeftBracket++
+                }
+                //一文字削除
+                //
+                resultView.text = resultView.text.dropLast(1)
+                //削除の結果0文字になったらacをtrue?
+            if(resultView.text.length==0){
+                acBtnAction()
+                return
+            }
+                //削除した文字の前の文字に対応した処理？
+                if(resultView.text.last().toString()=="/" ||resultView.text.last().toString()=="*"|| resultView.text.last().toString()=="+"|| resultView.text.last().toString()=="-") {
+                    number = false
+                    ac = false
+                    equal = false
+                    operator = true
+                    point = false
+                    leftBracket = false
+                    rightBracket = false
+                    headIsZero = false
+                } else if(resultView.text.last().toString()=="("){
+                    number = false
+                    ac = false
+                    equal = false
+                    operator = false
+                    point = false
+                    leftBracket = true
+                    rightBracket = false
+                    headIsZero = false
+                }  else if(resultView.text.last().toString()==")"){
+                    number = false
+                    ac = false
+                    equal = false
+                    operator = false
+                    point = false
+                    leftBracket = false
+                    rightBracket = true
+                    headIsZero = false
+                }
+//                 else if(resultView.text.last().toString()=="0"){
+//                    number = false
+//                    ac = false
+//                    equal = false
+//                    operator = false
+//                    point = false
+//                    leftBracket = true
+//                    rightBracket = false
+//                    headIsZero = false
+//               }
+                else {
+                    number = true
+                    ac = false
+                    equal = false
+                    operator = false
+                    point = false
+                    leftBracket = false
+                    rightBracket = false
+                    headIsZero = false
+                }
+                }
+            }
+
+
 
 
 
