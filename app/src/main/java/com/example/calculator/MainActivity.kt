@@ -13,11 +13,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         window.statusBarColor = Color.parseColor("#696969")
 
+
+
 // 入力受付の条件用bool　ほか
         var value: Double = 0.0
         var number : Boolean = false
         var ac: Boolean = false
-        var equal: Boolean = false
+        var equal: Boolean = true
         var operator: Boolean = false
         var point: Boolean = false
         var headIsZero : Boolean = false
@@ -74,10 +76,46 @@ var textIsNum : Boolean = false
 //            textIsNum = false
 //        }
 
+        //inputArray=逆ポーランド記法になった式の入った配列　から実際に計算をする関数
+        val numStack = ArrayDeque<Double>()
+
+        fun calcuRPoland (){
+            var a :Double
+            var b :Double
+
+            for(i in 0 .. inputArray.size-1) {
+                if(inputArray.elementAt(i)=="+") {
+                    a = numStack.removeLast()
+                    b = numStack.removeLast()
+                    numStack.add(a+b)
+                }
+                else if(inputArray.elementAt(i)=="-") {
+                    b = numStack.removeLast()
+                    a = numStack.removeLast()
+                    numStack.add(a-b)
+                }
+                else if(inputArray.elementAt(i)=="*") {
+                    a = numStack.removeLast()
+                    b = numStack.removeLast()
+                    numStack.add(a*b)
+                }
+                else if(inputArray.elementAt(i)=="/") {
+                    b = numStack.removeLast()
+                    a = numStack.removeLast()
+                    numStack.add(a/b)
+                } else {
+                    numStack.add(inputArray.elementAt(i).toDouble())
+                }
+            }
+            println(numStack.last())
+            resultView.text = numStack.removeLast().toString()
+
+        }
+
 
         fun toRPoland (){
             for(i in 0..resultView.text.length-1) {
-                if(resultView.text.elementAt(i) == '(' || resultView.text.elementAt(i) == '*' ||resultView.text.elementAt(i) == '/') {
+                if(resultView.text.elementAt(i).toString() == "(" || resultView.text.elementAt(i).toString() == "*" ||resultView.text.elementAt(i) == '/') {
 
                     if(textIsNum == true ) {
                         inputArray.add(tmpNum)
@@ -89,7 +127,7 @@ var textIsNum : Boolean = false
 
                     //push
                 }
-                else if ((resultView.text.elementAt(i) == '+' || resultView.text.elementAt(i) == '-') ) {
+                else if ((resultView.text.elementAt(i).toString() == "+" || resultView.text.elementAt(i).toString() == "-") ) {
 
                     if(textIsNum == true ) {
 
@@ -99,14 +137,18 @@ var textIsNum : Boolean = false
                     }
 
                     if(resultView.text.length > 0) {
-                        if (opStack.last() == "*" || opStack.last() == "/") {
-                            //配列外参照注意
-                            //popしたあとpush
-                            inputArray.add(opStack.removeLast())
-                            opStack.add(resultView.text.elementAt(i).toString())
+//                        if (opStack.last() == "*" || opStack.last() == "/") {
+//                            //配列外参照注意
+//                            //popしたあとpush
+//                            inputArray.add(opStack.removeLast())
+//                            opStack.add(resultView.text.elementAt(i).toString())
+                        //「優先度が低いものがくるまで」で試す
+                            while(opStack.isEmpty()==false&&(opStack.last() == "*" || opStack.last() == "/" ||opStack.last() == "+" || opStack.last() == "-")) {
+                                inputArray.add(opStack.removeLast())
 
-
-                         //  inputArray.add(resultView.text.elementAt(i).toString())
+                            }
+                        opStack.add(resultView.text.elementAt(i).toString())
+                        //  inputArray.add(resultView.text.elementAt(i).toString())
                         } else {
                             //pushしてstack積む
                             opStack.add(resultView.text.elementAt(i).toString())
@@ -117,8 +159,8 @@ var textIsNum : Boolean = false
                                 textIsNum = false
                             }
                         }
-                    }
-                } else if (resultView.text.elementAt(i) == ')') {
+
+                } else if (resultView.text.elementAt(i).toString() == ")") {
 
                     if(textIsNum == true ) {
                         inputArray.add(tmpNum)
@@ -126,18 +168,18 @@ var textIsNum : Boolean = false
                         textIsNum = false
                     }
 
-                    while(true){
-                        if(opStack.last() != "(") {
+                    while(true) {
+                        if (opStack.last() != "(") {
                             inputArray.add(opStack.removeLast())
                         } else {
                             opStack.removeLast()
                             break
+
+                            // スタック見て　( が出るまでpop
+                            // (　は捨てる
                         }
-                        // スタック見て　( が出るまでpop
-                        // (　は捨てる
+
                     }
-
-
                 } else {
                     textIsNum = true
                     tmpNum += (resultView.text.elementAt(i).toString())
@@ -157,13 +199,24 @@ var textIsNum : Boolean = false
                 }
                 //全部pop
             }
-
+//                        ここだけはLIFOじゃなくてFIFOってことでは？
+//            while(true) {
+//                if (opStack.first() == "(") {
+//                    opStack.removeFirst()
+//                } else {
+//                    inputArray.add(opStack.removeFirst())
+//                }
+//
+//                if (opStack.isEmpty() == true) {
+//                    break
+//                }
+//            }
             for(i in 0 .. inputArray.size-1) {
                 println(inputArray.elementAt(i))
             }
 
+            calcuRPoland()
             inputArray = arrayListOf()
-
 
         }
 
@@ -387,6 +440,7 @@ var textIsNum : Boolean = false
         }
 
         btnEqual.setOnClickListener {
+            if(equal!=true)
             equalBtnAction()
         }
 
