@@ -108,8 +108,17 @@ var textIsNum : Boolean = false
                 }
             }
             println(numStack.last())
-            resultView.text = numStack.removeLast().toString()
+            val x: Double = 1.0
+            val y: Double = 0.0
 
+            if(numStack.last()==x/y||numStack.last()==-1*x/y) {
+                resultView.text = "ゼロ除算です"
+                numStack.removeLast()
+                // subResultView ="ゼロ除算です" ?
+
+            } else {
+                resultView.text = numStack.removeLast().toString()
+            }
         }
 
 
@@ -221,10 +230,30 @@ var textIsNum : Boolean = false
         }
 
         //各ボタンが押された時の処理用の関数
+
+        fun acBtnAction() {
+            resultView.text = ""
+
+            number = false
+            ac = true
+            equal = false
+            operator = false
+            point = false
+            leftBracket = false
+            rightBracket = false
+            headIsZero = false
+            cntLeftBracket = 0
+
+
+        }
         // 1~9
         fun numBtnAction(num: String) {
             //todo イコールの直後に数字が押された時の処理
             //todo )の直後に数字が押された時の処理
+            if(resultView.text == "ゼロ除算です"){
+                acBtnAction()
+            }
+
             resultView.text = resultView.text.toString() + num
 
                 number = true
@@ -241,7 +270,12 @@ var textIsNum : Boolean = false
         fun zeroBtnAction (zero: String) {
             //todo イコールの直後に数字が押された時の処理
             //todo )の直後に数字が押された時の処理
+            if(resultView.text == "ゼロ除算です"){
+                acBtnAction()
+            }
+
             if(headIsZero==true&&point== false) {
+
             } else {
                 resultView.text = resultView.text.toString() + zero
 
@@ -259,6 +293,9 @@ var textIsNum : Boolean = false
         }
 
         fun opBtnAction(op : String) {
+            if(resultView.text == "ゼロ除算です"){
+                acBtnAction()
+            }
             if(ac == false && operator == false && leftBracket ==false) {
                 resultView.text = resultView.text.toString() + op
 
@@ -277,10 +314,14 @@ var textIsNum : Boolean = false
             }
         }
 //ここまで見た
-        fun bracketLeftBtnAction(br : String) {
+    fun bracketLeftBtnAction(br : String) {
+    if(resultView.text == "ゼロ除算です"){
+        acBtnAction()
+    }
     //todo 先頭でも使えて、)(にならない条件
-    if(resultView.text.length == 0 || (operator==false && rightBracket==false)) {
+    if(resultView.text.length == 0 || operator==true || leftBracket==true) {
         resultView.text = resultView.text.toString() + br
+        cntLeftBracket++
 
         number = false
         ac = false
@@ -295,7 +336,7 @@ var textIsNum : Boolean = false
 
         fun bracketRightBtnAction(br : String) {
             //todo 前が(でもなく、演算子でもない条件
-            if(cntLeftBracket>0 && operator==false && rightBracket==false) {
+            if(cntLeftBracket>0 && operator==false && leftBracket==false) {
                 resultView.text = resultView.text.toString() + br
 
                 number = false
@@ -313,6 +354,7 @@ var textIsNum : Boolean = false
         }
 
         fun equalBtnAction() {
+            if (cntLeftBracket == 0 && operator!=true && ac !=true){
 
             toRPoland()
 
@@ -324,31 +366,18 @@ var textIsNum : Boolean = false
             leftBracket = false
             rightBracket = false
             headIsZero = false
-
+        }
             //todo textを配列に渡す関数
         }
 
-        fun acBtnAction() {
-            resultView.text = ""
 
-            number = false
-            ac = true
-            equal = false
-            operator = false
-            point = false
-            leftBracket = false
-            rightBracket = false
-            headIsZero = false
-
-
-        }
 
         fun delBtnAction() {
             if(resultView.text.length > 0) {
                 //todo textが空のとき何もしない
 
                 //一文字削除
-                resultView.text.dropLast(1)
+                resultView.text = resultView.text.dropLast(1)
                 //削除の結果0文字になったらacをtrue?
             if(resultView.text.length==0){
                 acBtnAction()
@@ -383,9 +412,9 @@ var textIsNum : Boolean = false
             //除算記号側でなんかするべきかも
             //そもそも下の条件つけて0押すとアプリが落ちる
             //←無入力だったから配列外参照で落ちてた
-            if(resultView.text.substring(resultView.text.length - 1) != "/"){ //ゼロ除算
+         //   if(resultView.text.substring(resultView.text.length - 1) != "/"){ //ゼロ除算
             zeroBtnAction("0");
-        }
+  //      }
         }
 
         btnOne.setOnClickListener {
@@ -461,7 +490,7 @@ var textIsNum : Boolean = false
 
         btnBracketLeft.setOnClickListener {
             bracketLeftBtnAction("(")
-            cntLeftBracket++ //読んだ関数内でやるべき？
+            //読んだ関数内でやるべき？
         }
 
         btnBracketRight.setOnClickListener {
